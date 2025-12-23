@@ -1,0 +1,15 @@
+export const fileInput = document.querySelector(".image-input");
+export const imgView = document.querySelector(".preview");
+export const boxPreview = document.querySelector(".upload-box");
+export const uploadContent = document.querySelector(".upload-content");
+
+export const modeSelect = document.querySelector(".mode");
+export const brightnessSlider = document.querySelector(".brightness");
+export const blurSlider = document.querySelector(".blur");
+
+export const downloadBtn = document.querySelector(".download-img");
+export const formatSelect = document.querySelector(".download-format");
+
+export const resizeWidthInput = document.querySelector(".resize-width");
+export const resizeHeightInput = document.querySelector(".resize-height");
+export const keepRatioCheckbox = document.querySelector(".keep-ratio");
