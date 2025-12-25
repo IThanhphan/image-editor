@@ -6,14 +6,17 @@ import {
   imgView,
 } from "../core/dom.js";
 
-export async function uploadImage() {
+export async function filterImage() {
   const file = fileInput.files[0];
   if (!file) return;
 
   const formData = new FormData();
   formData.append("image", file);
+  formData.append("mode", modeSelect.value);
+  formData.append("brightness", brightnessSlider.value);
+  formData.append("blur", blurSlider.value);
 
-  const res = await fetch("/api/upload", {
+  const res = await fetch("/api/filter", {
     method: "POST",
     body: formData,
   });

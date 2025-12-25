@@ -98,6 +98,40 @@ body {
   opacity: 0.7;
 }
 
+.rotate-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.rotate-actions button {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #1e1e22;
+  border: 1px solid #333;
+  cursor: pointer;
+}
+
+.rotate-range {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rotate-range label {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+.rotate-range input[type="range"] {
+  width: 100%;
+}
+
+.rotate-range span {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
 .upload-box {
   width: 70%;
   height: 620px;

@@ -13,3 +13,7 @@ export const formatSelect = document.querySelector(".download-format");
 export const resizeWidthInput = document.querySelector(".resize-width");
 export const resizeHeightInput = document.querySelector(".resize-height");
 export const keepRatioCheckbox = document.querySelector(".keep-ratio");
+
+export const rotateActionBtns = document.querySelectorAll(".rotate-actions button")
+export const rotateSlider = document.querySelector(".rotate-slider");
+export const rotateValueText = document.querySelector(".rotate-value");
