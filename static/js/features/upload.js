@@ -1,8 +1,5 @@
 import {
   fileInput,
-  modeSelect,
-  brightnessSlider,
-  blurSlider,
   imgView,
 } from "../core/dom.js";
 

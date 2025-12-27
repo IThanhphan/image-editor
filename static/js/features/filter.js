@@ -1,28 +1,37 @@
 import {
-  fileInput,
   modeSelect,
   brightnessSlider,
   blurSlider,
   imgView,
 } from "../core/dom.js";
 
+import { startLoading, finishLoading } from "./loading.js";
+
 export async function filterImage() {
-  const file = fileInput.files[0];
-  if (!file) return;
+  if (!imgView.src) return;
 
   const formData = new FormData();
-  formData.append("image", file);
   formData.append("mode", modeSelect.value);
   formData.append("brightness", brightnessSlider.value);
   formData.append("blur", blurSlider.value);
 
-  const res = await fetch("/api/filter", {
-    method: "POST",
-    body: formData,
-  });
+  try {
+    startLoading();
 
-  if (!res.ok) throw new Error("Upload failed");
+    const res = await fetch("/api/filter", {
+      method: "POST",
+      body: formData,
+    });
 
-  const data = await res.json();
-  imgView.src = data.url;
+    if (!res.ok) {
+      throw new Error("Upload failed");
+    }
+
+    const data = await res.json();
+    imgView.src = data.url;
+  } catch (err) {
+    console.error("Filter error:", err);
+  } finally {
+    finishLoading();
+  }
 }

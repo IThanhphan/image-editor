@@ -13,6 +13,18 @@ body {
   align-items: center;
 }
 
+.top-loading-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  z-index: 9999;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
 .container {
   width: fit-content;
   height: 100%;

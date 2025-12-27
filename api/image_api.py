@@ -1,60 +1,94 @@
-from fastapi import APIRouter, UploadFile, File, Form
-from PIL import Image, ImageEnhance
-from fastapi.responses import FileResponse
-from services.image_service import processFilterImage, processRotateImage
-import uuid, os, io
+from fastapi import APIRouter, UploadFile, File, Form, Request, HTTPException
+from PIL import Image
+import io, os, uuid
+
+from services.image_builder import build_image
 
 router = APIRouter()
 
-OUTPUT_DIR = "static/output"
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+ORIGINAL_DIR = "static/output"
+os.makedirs(ORIGINAL_DIR, exist_ok=True)
 
+def get_image_state(request: Request):
+    return request.session.get("image")
+
+# 1️⃣ Upload
 @router.post("/upload")
 async def upload(
+    request: Request,
     image: UploadFile = File(...)
 ):
+    request.session.pop("image", None)
     filename = f"{uuid.uuid4()}.png"
-    output_path = os.path.join(OUTPUT_DIR, filename)
+    original_path = os.path.join(ORIGINAL_DIR, filename)
 
-    image_bytes = image.file.read()
+    img_bytes = image.file.read()
+    pil_img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+    pil_img.save(original_path)
 
-    pil_img = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-
-    pil_img.save(output_path)
-
-    return {
-        "url": f"/static/output/{filename}"
+    request.session["image"] = {
+        "original_path": original_path,
+        "mode": "original",
+        "brightness": 1.0,
+        "blur": 15,
+        "angle": 0,
+        "flipX": 1,
+        "flipY": 1,
+        "remove_bg": False
     }
 
+    output_path = build_image(request.session["image"])
+
+    return {"url": "/" + output_path}
+
+# 2️⃣ Filter
 @router.post("/filter")
-async def filterImage(
-    image: UploadFile = File(...),
-    mode: str = Form("gray"),
+async def filter_image(
+    request: Request,
+    mode: str = Form("original"),
     brightness: float = Form(1.0),
     blur: int = Form(15)
 ):
-    filename = f"{uuid.uuid4()}.png"
-    output_path = os.path.join(OUTPUT_DIR, filename)
+    state = get_image_state(request)
+    if not state:
+        raise HTTPException(400, "No image session")
 
-    processFilterImage(image, mode, output_path, brightness, blur)
+    state["mode"] = mode
+    state["brightness"] = brightness
+    state["blur"] = blur
 
-    return {
-        "url": f"/static/output/{filename}"
-    }
+    output_path = build_image(state)
+    return {"url": "/" + output_path}
 
+# 3️⃣ Rotate
 @router.post("/rotate")
-async def rotateImage(
-    image: UploadFile = File(...),
-    angle: float = Form(0),
+async def rotate_image(
+    request: Request,
+    angle: int = Form(0),
     flipX: int = Form(1),
     flipY: int = Form(1)
 ):
-    filename = f"{uuid.uuid4()}.png"
-    output_path = os.path.join(OUTPUT_DIR, filename)
+    state = get_image_state(request)
+    if not state:
+        raise HTTPException(400, "No image session")
 
-    processRotateImage(image, output_path, angle, flipX, flipY)
+    state["angle"] = angle
+    state["flipX"] = flipX
+    state["flipY"] = flipY
 
-    return {
-        "url": f"/static/output/{filename}"
-    }
+    output_path = build_image(state)
+    return {"url": "/" + output_path}
 
+@router.post("/remove-bg")
+async def remove_bg(
+    request: Request,
+):
+    state = get_image_state(request)
+    if not state:
+        raise HTTPException(400, "No image session")
+
+    # Đánh dấu đã xóa nền
+    state["remove_bg"] = True
+
+    output_path = build_image(state)
+    return {"url": "/" + output_path}

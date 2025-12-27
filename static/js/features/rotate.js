@@ -1,4 +1,5 @@
 import { imgView } from "../core/dom.js";
+import { startLoading, finishLoading } from "./loading.js";
 
 export class RotateFeature {
   constructor() {
@@ -32,24 +33,38 @@ export class RotateFeature {
   setRotate(value) {
     this.state.angle = this.normalizeAngle(value);
   }
+
+  reset() {
+    this.state.angle = 0;
+    this.state.flipX = 1;
+    this.state.flipY = 1;
+  }
 }
 
-export async function rotateImage(file, rotate) {
-  if (!file) return;
-
+export async function rotateImage(rotate) {
+  if (!imgView.src) return;
   const formData = new FormData();
-  formData.append("image", file);
   formData.append("angle", rotate.state.angle);
   formData.append("flipX", rotate.state.flipX);
   formData.append("flipY", rotate.state.flipY);
 
-  const res = await fetch("/api/rotate", {
-    method: "POST",
-    body: formData,
-  });
+  try {
+    startLoading();
 
-  if (!res.ok) throw new Error("Upload failed");
+    const res = await fetch("/api/rotate", {
+      method: "POST",
+      body: formData,
+    });
 
-  const data = await res.json();
-  imgView.src = data.url;
+    if (!res.ok) {
+      throw new Error("Rotate failed");
+    }
+
+    const data = await res.json();
+    imgView.src = data.url;
+  } catch (err) {
+    console.error("Rotate error:", err);
+  } finally {
+    finishLoading();
+  }
 }
