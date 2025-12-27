@@ -50,6 +50,10 @@ body {
   display: flex;
 }
 
+.controls label {
+  margin-right: 10px;
+}
+
 .resize-width,
 .resize-height {
   background-color: black;
@@ -65,7 +69,8 @@ body {
   cursor: pointer;
 }
 
-.mode {
+.mode-filter,
+.mode-adjustment {
   padding: 3px;
   background-color: black;
   border-radius: 10px;
@@ -84,6 +89,7 @@ body {
 }
 
 .feature-detail {
+  width: 350px;
   padding: 0px 70px;
   display: flex;
   flex-direction: column;
@@ -94,6 +100,14 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.control-brightness,
+.control-blur,
+.control-sharpness,
+.control-contrast,
+.control-color {
+  display: none;
 }
 
 .control-group label {

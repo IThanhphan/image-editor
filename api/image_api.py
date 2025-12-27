@@ -12,7 +12,6 @@ os.makedirs(ORIGINAL_DIR, exist_ok=True)
 def get_image_state(request: Request):
     return request.session.get("image")
 
-# 1️⃣ Upload
 @router.post("/upload")
 async def upload(
     request: Request,
@@ -28,9 +27,12 @@ async def upload(
 
     request.session["image"] = {
         "original_path": original_path,
-        "mode": "original",
+        "filter": "original",
         "brightness": 1.0,
-        "blur": 15,
+        "blur": 0,
+        "sharpness": 1.0,
+        "contrast": 1.0,
+        "color": 1.0,
         "angle": 0,
         "flipX": 1,
         "flipY": 1,
@@ -41,26 +43,42 @@ async def upload(
 
     return {"url": "/" + output_path}
 
-# 2️⃣ Filter
 @router.post("/filter")
 async def filter_image(
     request: Request,
-    mode: str = Form("original"),
-    brightness: float = Form(1.0),
-    blur: int = Form(15)
+    mode: str = Form("original")
 ):
     state = get_image_state(request)
     if not state:
         raise HTTPException(400, "No image session")
 
-    state["mode"] = mode
-    state["brightness"] = brightness
-    state["blur"] = blur
+    state["filter"] = mode
 
     output_path = build_image(state)
     return {"url": "/" + output_path}
 
-# 3️⃣ Rotate
+@router.post("/adjustment")
+async def adjustment_image(
+    request: Request,
+    brightness: float = Form(1.0),
+    blur: int = Form(0),
+    sharpness: float = Form(1.0),
+    contrast: float = Form(1.0),
+    color: float = Form(1.0),
+):
+    state = get_image_state(request)
+    if not state:
+        raise HTTPException(400, "No image session")
+
+    state["brightness"] = brightness
+    state["blur"] = blur
+    state["sharpness"] = sharpness
+    state["contrast"] = contrast
+    state["color"] = color
+
+    output_path = build_image(state)
+    return {"url": "/" + output_path}
+
 @router.post("/rotate")
 async def rotate_image(
     request: Request,

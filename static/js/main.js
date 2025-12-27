@@ -1,7 +1,8 @@
 import {
   fileInput,
   boxPreview,
-  modeSelect,
+  modeFilterSelect,
+  modeAdjustmentSelect,
   brightnessSlider,
   blurSlider,
   resizeWidthInput,
@@ -12,53 +13,70 @@ import {
   rotateValueText,
   brightnessValueText,
   blurValueText,
+  sharpnessSlider,
+  sharpnessValueText,
+  contrastSlider,
+  contrastValueText,
+  colorSlider,
+  colorValueText,
 } from "./core/dom.js";
 
 import { debounce } from "./core/utils.js";
-import { resetImageUI } from "./core/ui.js";
+import { resetImageUI, resetSlider } from "./core/ui.js";
 import { previewImage, updateResizeByRatio } from "./features/preview.js";
 import { uploadImage } from "./features/upload.js";
 import { filterImage } from "./features/filter.js";
+import { adjustmentImage } from "./features/adjustment.js";
 import { rotateImage } from "./features/rotate.js";
 import { state } from "./core/state.js";
 import { downloadImage } from "./features/download.js";
 import { updateSlidersByMode } from "./features/sliders.js";
 
-const debouncedFilter = debounce(filterImage, 400);
+const debouncedAdjustment = debounce(adjustmentImage, 400);
 const debouncedRotate = debounce(() => {
   rotateImage(state.rotate);
 }, 400);
 
 fileInput.addEventListener("change", () => {
-  modeSelect.value = "original";
+  modeFilterSelect.value = "original";
+  modeAdjustmentSelect.value = "original";
   updateSlidersByMode("original");
   previewImage(fileInput.files[0]);
   uploadImage();
   resetImageUI();
 });
 
-modeSelect.addEventListener("change", () => {
-  updateSlidersByMode(modeSelect.value);
-  if (modeSelect.value == "original") {
-    brightnessValueText.textContent = brightnessSlider.value = 1.0;
-    blurValueText.textContent = blurSlider.value = 15;
-  } else if (modeSelect.value == "gray") {
-    brightnessValueText.textContent = brightnessSlider.value = 1.0;
-    blurValueText.textContent = blurSlider.value = 15;
-  } else if (modeSelect.value == "bright")
-    blurValueText.textContent = blurSlider.value = 15;
-  else if (modeSelect.value == "blur")
-    brightnessValueText.textContent = brightnessSlider.value = 1.0;
+modeFilterSelect.addEventListener("change", () => {
   filterImage();
+});
+
+modeAdjustmentSelect.addEventListener("change", () => {
+  updateSlidersByMode(modeAdjustmentSelect.value);
+  if (modeAdjustmentSelect.value == "original") {
+    resetSlider();
+  }
+  adjustmentImage();
 });
 
 brightnessSlider.addEventListener("input", () => {
   brightnessValueText.textContent = brightnessSlider.value;
-  debouncedFilter();
+  debouncedAdjustment();
 });
 blurSlider.addEventListener("input", () => {
   blurValueText.textContent = blurSlider.value;
-  debouncedFilter();
+  debouncedAdjustment();
+});
+sharpnessSlider.addEventListener("input", () => {
+  sharpnessValueText.textContent = sharpnessSlider.value;
+  debouncedAdjustment();
+});
+contrastSlider.addEventListener("input", () => {
+  contrastValueText.textContent = contrastSlider.value;
+  debouncedAdjustment();
+});
+colorSlider.addEventListener("input", () => {
+  colorValueText.textContent = colorSlider.value;
+  debouncedAdjustment();
 });
 
 resizeWidthInput.addEventListener("input", () => updateResizeByRatio("width"));

@@ -1,4 +1,4 @@
-import { imgView, resizeWidthInput, resizeHeightInput, keepRatioCheckbox, formatSelect, modeSelect } from "../core/dom.js";
+import { imgView, resizeWidthInput, resizeHeightInput, keepRatioCheckbox, formatSelect, modeFilterSelect } from "../core/dom.js";
 import { loadImage, triggerDownload } from "../core/utils.js";
 
 export function downloadImage() {
@@ -44,7 +44,7 @@ export function downloadImage() {
 
     canvas.toBlob((blob) => {
       const url = URL.createObjectURL(blob);
-      triggerDownload(url, `image_${modeSelect.value}_${w}x${h}.${format}`);
+      triggerDownload(url, `image_${modeFilterSelect.value}_${w}x${h}.${format}`);
       URL.revokeObjectURL(url);
     }, mime, 0.95);
   });

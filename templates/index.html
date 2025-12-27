@@ -14,11 +14,25 @@
       <div class="tools">
         <h1>Image Editor</h1>
         <div class="controls">
-          <select class="mode">
+          <label>Filter</label>
+          <select class="mode-filter">
             <option value="original" selected>Original</option>
             <option value="gray">Grayscale</option>
+            <option value="invert">Invert</option>
+            <option value="edge">Edge</option>
+            <option value="sepia">Sepia</option>
+            <option value="emboss">Emboss</option>
+            <option value="canny">Canny</option>
+            <option value="pixel">Pixel</option>
+          </select>
+          <label>Adjustment</label>
+          <select class="mode-adjustment">
+            <option value="original" selected>Original</option>
             <option value="bright">Bright</option>
             <option value="blur">Blur</option>
+            <option value="sharpness">Sharpness</option>
+            <option value="contrast">Contrast</option>
+            <option value="color">Color</option>
           </select>
           <div class="resize-controls">
             <label>Width</label>
@@ -48,16 +62,34 @@
 
     <div class="main">
       <div class="feature-detail">
-        <div class="control-group">
+        <div class="control-group control-brightness">
           <label>Brightness</label>
           <input type="range" class="brightness" min="0.5" max="2" step="0.1" value="1" />
           <span class="brightness-value">1.0</span>
         </div>
 
-        <div class="control-group">
+        <div class="control-group control-blur">
           <label>Blur</label>
-          <input type="range" class="blur" min="1" max="31" step="2" value="15" />
-          <span class="blur-value">15</span>
+          <input type="range" class="blur" min="1" max="31" step="2" value="0" />
+          <span class="blur-value">0</span>
+        </div>
+
+        <div class="control-group control-sharpness">
+          <label>Sharpness</label>
+          <input type="range" class="sharpness" min="0.0" max="3.0" step="0.1" value="1.0" />
+          <span class="sharpness-value">1.0</span>
+        </div>
+
+        <div class="control-group control-contrast">
+          <label>Contrast</label>
+          <input type="range" class="contrast" min="0.5" max="2.0" step="0.1" value="1.0" />
+          <span class="contrast-value">1.0</span>
+        </div>
+
+        <div class="control-group control-color">
+          <label>Color</label>
+          <input type="range" class="color" min="0.0" max="2.0" step="0.1" value="1.0" />
+          <span class="color-value">1.0</span>
         </div>
         <h3>Rotate</h3>
 
