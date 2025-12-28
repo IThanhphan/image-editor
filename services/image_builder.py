@@ -27,6 +27,19 @@ def build_image(state: dict):
     if state["angle"] != 0:
         img = img.rotate(-state["angle"], expand=True)
 
+    # crop
+    crop = state.get("crop")
+    if crop:
+        x = max(0, crop["x"])
+        y = max(0, crop["y"])
+        w = crop["w"]
+        h = crop["h"]
+
+        x2 = min(img.width, x + w)
+        y2 = min(img.height, y + h)
+
+        img = img.crop((x, y, x2, y2))
+
     #Tách alpha
     rgb, alpha = img.convert("RGB"), img.split()[-1]
 

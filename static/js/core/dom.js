@@ -9,6 +9,12 @@ export const modeFilterSelect = document.querySelector(".mode-filter");
 
 export const modeAdjustmentSelect = document.querySelector(".mode-adjustment");
 
+export const removeBgBtn = document.querySelector(".remove-bg-btn");
+
+export const cropBtn = document.querySelector(".crop-btn");
+export const cropBox = document.querySelector(".crop-box");
+export const cropConfirmBtn = document.querySelector(".crop-confirm");
+
 export const brightnessSlider = document.querySelector(".brightness");
 export const brightnessValueText = document.querySelector(".brightness-value");
 export const controlBrightness = document.querySelector(".control-brightness");

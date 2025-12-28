@@ -36,7 +36,8 @@ async def upload(
         "angle": 0,
         "flipX": 1,
         "flipY": 1,
-        "remove_bg": False
+        "remove_bg": False,
+        "crop": None
     }
 
     output_path = build_image(request.session["image"])
@@ -108,5 +109,37 @@ async def remove_bg(
     # Đánh dấu đã xóa nền
     state["remove_bg"] = True
 
+    output_path = build_image(state)
+    return {"url": "/" + output_path}
+
+@router.post("/crop")
+async def crop_image(
+    request: Request,
+    x: float = Form(...),
+    y: float = Form(...),
+    w: float = Form(...),
+    h: float = Form(...)
+):
+    state = get_image_state(request)
+    if not state:
+        raise HTTPException(400, "No image session")
+
+    state["crop"] = {
+        "x": x,
+        "y": y,
+        "w": w,
+        "h": h
+    }
+
+    output_path = build_image(state)
+    return {"url": "/" + output_path}
+
+@router.post("/reset-crop")
+async def reset_crop(request: Request):
+    state = get_image_state(request)
+    if not state:
+        raise HTTPException(400, "No image session")
+
+    state["crop"] = None
     output_path = build_image(state)
     return {"url": "/" + output_path}
