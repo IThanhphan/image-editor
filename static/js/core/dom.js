@@ -11,6 +11,9 @@ export const modeAdjustmentSelect = document.querySelector(".mode-adjustment");
 
 export const removeBgBtn = document.querySelector(".remove-bg-btn");
 
+export const changeBgBtn = document.querySelector(".change-bg-btn");
+export const bgInput = document.querySelector(".bg-input");
+
 export const cropBtn = document.querySelector(".crop-btn");
 export const cropBox = document.querySelector(".crop-box");
 export const cropConfirmBtn = document.querySelector(".crop-confirm");
@@ -47,3 +50,5 @@ export const rotateActionBtns = document.querySelectorAll(
 );
 export const rotateSlider = document.querySelector(".rotate-slider");
 export const rotateValueText = document.querySelector(".rotate-value");
+
+export const loadingBox = document.querySelector(".loading-box");

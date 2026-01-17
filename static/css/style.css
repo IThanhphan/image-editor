@@ -62,7 +62,8 @@ body {
 }
 
 .remove-bg-btn,
-.crop-btn {
+.crop-btn,
+.change-bg-btn {
   border-radius: 8px;
   background: #1e1e22;
   border: 1px solid #333;
@@ -96,6 +97,7 @@ body {
 .main {
   width: 100%;
   display: flex;
+  position: relative;
 }
 
 .feature-detail {
@@ -253,4 +255,64 @@ body {
 
 .crop-box.done .crop-confirm {
   display: block;
+}
+
+.upload-box {
+  position: relative;
+}
+
+.loading-box {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 15, 20, 0.55);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.loading-box.active {
+  display: flex;
+}
+
+.loading-box .process {
+  width: 55%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-box .process::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(
+    90deg,
+    rgba(77, 166, 255, 0),
+    #4da6ff,
+    rgba(77, 166, 255, 0)
+  );
+  animation: loading-slide 1.3s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px #4da6ff);
+}
+
+@keyframes loading-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(250%);
+  }
+}
+
+body.loading {
+  pointer-events: none;
+}
+
+body.loading .loading-box {
+  pointer-events: all;
 }

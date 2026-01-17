@@ -37,6 +37,7 @@ async def upload(
         "flipX": 1,
         "flipY": 1,
         "remove_bg": False,
+        "change_bg_path": None,
         "crop": None
     }
 
@@ -108,6 +109,27 @@ async def remove_bg(
 
     # Đánh dấu đã xóa nền
     state["remove_bg"] = True
+
+    output_path = build_image(state)
+    return {"url": "/" + output_path}
+
+@router.post("/change_bg")
+async def change_bg(
+    request: Request,
+    bg_image: UploadFile = File(...)
+):
+    state = get_image_state(request)
+    if not state:
+        raise HTTPException(400, "No image session")
+
+    filename = f"bg_{uuid.uuid4()}.png"
+    bg_path = os.path.join(ORIGINAL_DIR, filename)
+
+    img_bytes = await bg_image.read()
+    bg = Image.open(io.BytesIO(img_bytes)).convert("RGBA")
+    bg.save(bg_path)
+
+    state["change_bg_path"] = bg_path
 
     output_path = build_image(state)
     return {"url": "/" + output_path}

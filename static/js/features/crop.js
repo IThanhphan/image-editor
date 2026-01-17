@@ -2,6 +2,8 @@ import { imgView } from "../core/dom.js";
 
 import { startLoading, finishLoading } from "./loading.js";
 
+import { resizeWidthInput, resizeHeightInput } from "../core/dom.js";
+
 export async function cropImage(cropData) {
   if (!imgView.src) return;
 
@@ -35,6 +37,9 @@ export async function cropImage(cropData) {
 
     const data = await res.json();
     imgView.src = data.url;
+
+    resizeWidthInput.value = imgView.width;
+    resizeHeightInput.value = imgView.height;
   } catch (err) {
     console.error("Filter error:", err);
   } finally {

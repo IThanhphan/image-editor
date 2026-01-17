@@ -11,11 +11,36 @@ def build_image(state: dict):
     img = Image.open(state["original_path"]).convert("RGBA")
 
     #Remove background (lazy import)
-    if state.get("remove_bg"):
+    if state["remove_bg"]:
         import rembg
         buf = io.BytesIO()
         img.save(buf, format="PNG")
         img = Image.open(io.BytesIO(rembg.remove(buf.getvalue()))).convert("RGBA")
+        filename = f"{uuid.uuid4()}.png"
+        new_original_path = os.path.join(OUTPUT_DIR, filename)
+        img.save(new_original_path, format="PNG")
+
+        state["original_path"] = new_original_path
+        state["remove_bg"] = False
+
+    #Change background (lazy import)
+    bg = state["change_bg_path"]
+
+    if bg: 
+        import rembg
+        buf = io.BytesIO()
+        img.save(buf, format="PNG")
+        img = Image.open(io.BytesIO(rembg.remove(buf.getvalue()))).convert("RGBA")
+        background = Image.open(bg).convert("RGBA")
+        background = background.resize(img.size)
+        img = Image.alpha_composite(background, img)
+        filename = f"{uuid.uuid4()}.png"
+        new_original_path = os.path.join(OUTPUT_DIR, filename)
+        img.save(new_original_path, format="PNG")
+
+        state["original_path"] = new_original_path
+        state["change_bg_path"] = None
+
 
     #Transform (giữ RGBA)
     if state["flipX"] == -1:
@@ -28,7 +53,7 @@ def build_image(state: dict):
         img = img.rotate(-state["angle"], expand=True)
 
     # crop
-    crop = state.get("crop")
+    crop = state["crop"]
     if crop:
         x = max(0, crop["x"])
         y = max(0, crop["y"])
@@ -39,6 +64,16 @@ def build_image(state: dict):
         y2 = min(img.height, y + h)
 
         img = img.crop((x, y, x2, y2))
+
+        filename = f"{uuid.uuid4()}.png"
+        new_original_path = os.path.join(OUTPUT_DIR, filename)
+        img.save(new_original_path, format="PNG")
+
+        state["original_path"] = new_original_path
+        state["crop"] = None
+        state["angle"] = 0
+        state["flipX"] = 1
+        state["flipY"] = 1
 
     #Tách alpha
     rgb, alpha = img.convert("RGB"), img.split()[-1]

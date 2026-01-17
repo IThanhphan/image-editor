@@ -24,21 +24,25 @@ import {
   cropBox,
   cropBtn,
   cropConfirmBtn,
+  changeBgBtn,
+  bgInput,
 } from "./core/dom.js";
 
-import { debounce } from "./core/utils.js";
+import { debounce, clamp } from "./core/utils.js";
 import { resetImageUI, resetSlider } from "./core/ui.js";
 import { previewImage, updateResizeByRatio } from "./features/preview.js";
 import { uploadImage } from "./features/upload.js";
 import { filterImage } from "./features/filter.js";
 import { adjustmentImage } from "./features/adjustment.js";
 import { removeBgImage } from "./features/removeBg.js";
+import { changeBgImage } from "./features/changeBg.js";
 import { rotateImage } from "./features/rotate.js";
 import { cropImage } from "./features/crop.js";
 import { state } from "./core/state.js";
 import { downloadImage } from "./features/download.js";
 import { updateSlidersByMode } from "./features/sliders.js";
 
+//Crop
 let isCropping = false;
 let startX = 0,
   startY = 0;
@@ -77,8 +81,11 @@ boxPreview.addEventListener("mousedown", (e) => {
   const imgRect = imgView.getBoundingClientRect();
   const parentRect = boxPreview.getBoundingClientRect();
 
-  startX = e.clientX - imgRect.left;
-  startY = e.clientY - imgRect.top;
+  let x = e.clientX - imgRect.left;
+  let y = e.clientY - imgRect.top;
+
+  startX = clamp(x, 0, imgRect.width);
+  startY = clamp(y, 0, imgRect.height);
 
   cropBox.style.left = imgRect.left - parentRect.left + startX + "px";
   cropBox.style.top = imgRect.top - parentRect.top + startY + "px";
@@ -93,13 +100,16 @@ boxPreview.addEventListener("mousemove", (e) => {
   const imgRect = imgView.getBoundingClientRect();
   const parentRect = boxPreview.getBoundingClientRect();
 
-  const currentX = e.clientX - imgRect.left;
-  const currentY = e.clientY - imgRect.top;
+  let curX = e.clientX - imgRect.left;
+  let curY = e.clientY - imgRect.top;
 
-  const x = Math.min(startX, currentX);
-  const y = Math.min(startY, currentY);
-  const w = Math.abs(currentX - startX);
-  const h = Math.abs(currentY - startY);
+  curX = clamp(curX, 0, imgRect.width);
+  curY = clamp(curY, 0, imgRect.height);
+
+  const x = Math.min(startX, curX);
+  const y = Math.min(startY, curY);
+  const w = Math.abs(curX - startX);
+  const h = Math.abs(curY - startY);
 
   cropBox.style.left = imgRect.left - parentRect.left + x + "px";
   cropBox.style.top = imgRect.top - parentRect.top + y + "px";
@@ -134,6 +144,7 @@ cropConfirmBtn.addEventListener("click", (e) => {
   cropData = null;
 });
 
+//Upload
 fileInput.addEventListener("change", () => {
   modeFilterSelect.value = "original";
   modeAdjustmentSelect.value = "original";
@@ -143,10 +154,12 @@ fileInput.addEventListener("change", () => {
   resetImageUI();
 });
 
+//Filter
 modeFilterSelect.addEventListener("change", () => {
   filterImage();
 });
 
+//Adjustment
 modeAdjustmentSelect.addEventListener("change", () => {
   updateSlidersByMode(modeAdjustmentSelect.value);
   if (modeAdjustmentSelect.value == "original") {
@@ -176,13 +189,16 @@ colorSlider.addEventListener("input", () => {
   debouncedAdjustment();
 });
 
+//Resize
 resizeWidthInput.addEventListener("input", () => updateResizeByRatio("width"));
 resizeHeightInput.addEventListener("input", () =>
   updateResizeByRatio("height")
 );
 
+//Download
 downloadBtn.addEventListener("click", downloadImage);
 
+//Preview
 boxPreview.addEventListener("click", (e) => {
   if (
     cropBox.style.display === "block" ||
@@ -197,8 +213,17 @@ boxPreview.addEventListener("click", (e) => {
   fileInput.click();
 });
 
+//Remove background
 removeBgBtn.addEventListener("click", removeBgImage);
 
+//Change background
+changeBgBtn.addEventListener("click", () => {
+  bgInput.click();
+});
+
+bgInput.addEventListener("change", changeBgImage);
+
+//Rotate
 rotateActionBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
     const action = btn.dataset.action;

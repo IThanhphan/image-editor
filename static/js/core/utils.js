@@ -21,3 +21,7 @@ export function triggerDownload(src, filename) {
   a.click();
   document.body.removeChild(a);
 }
+
+export function clamp(value, min, max) {
+  return Math.max(min, Math.min(value, max));
+}
